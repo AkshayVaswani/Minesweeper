@@ -14,7 +14,7 @@ public class MineSweeper extends JPanel implements ActionListener, MouseListener
 	JMenuItem item3;
 	JPanel panel;
 	JToggleButton[][] togglers;
-	String[][] board;
+	static String[][] board;
 	int dimensionx = 9;
 	int dimensiony = 9;
 	ImageIcon mine;
@@ -23,7 +23,6 @@ public class MineSweeper extends JPanel implements ActionListener, MouseListener
 	int mineCount = 10;
 
 	
-	//testing 123
 	public MineSweeper()
 	{
 		frame=new JFrame("Minesweeper");
@@ -34,6 +33,8 @@ public class MineSweeper extends JPanel implements ActionListener, MouseListener
 		item2 = new JMenuItem("Intermediate");
 		item3 = new JMenuItem("Expert");
 		
+		board = new String[dimensionx][dimensiony];
+
 		faceIcon = new ImageIcon("smiley.png");
 		faceIcon = new ImageIcon(faceIcon.getImage().getScaledInstance(20,20, Image.SCALE_SMOOTH));
 		smileyFace = new JButton("");
@@ -75,12 +76,35 @@ public class MineSweeper extends JPanel implements ActionListener, MouseListener
 				panel.add(togglers[x][y]);
 			}
 		}
+		boardGenerator(65, 0, 0);
 		frame.add(panel, BorderLayout.CENTER);
 		frame.revalidate();
 	}
 	
 	public void boardGenerator(int mineCounter, int firstX, int firstY){
-		 
+		 int counter = 0;
+		 for(int i =0; i<dimensionx; i++) {
+			 for(int j =0; j<dimensiony; j++) {
+				 board[i][j] = "0";
+			 }
+		 }
+		 board[firstX][firstY] = "F";
+		 while(counter<80) {
+			 int tempX = (int)(Math.random()*dimensionx);
+			 int tempY = (int)(Math.random()*dimensiony);
+			 if(board[tempX][tempY] == "0" && board[tempX][tempY] != "F") {
+				 board[tempX][tempY] = "B";
+				 counter++;
+			 }
+			 
+		 }
+		 for(int i =0; i<dimensionx; i++) {
+			
+			 for(int j =0; j<dimensiony; j++) {
+				 System.out.print(board[i][j]+" ");
+			 }
+			 System.out.println();
+		 }
 	}
 	
 	
