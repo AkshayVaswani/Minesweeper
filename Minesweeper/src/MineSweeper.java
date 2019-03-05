@@ -22,6 +22,8 @@ public class MineSweeper extends JPanel implements ActionListener, MouseListener
 	JButton smileyFace;
 	int mineCount = 10;
 
+	
+	//testing 123
 	public MineSweeper()
 	{
 		frame=new JFrame("Minesweeper");
