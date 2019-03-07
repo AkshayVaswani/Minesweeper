@@ -161,7 +161,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		 board[firstX][firstY] = "F";
 		 while(counter<mineCount){
 			 int tempX = (int)(Math.random()*dimensionx);
-			 int tempY = (int)(Math.random()*dimensiony);
+			 int tempY = (int)(Math.random()*dimensiony);								//FIX, NOT WORKING, CAUSING COMPUTER TO CRASH
 			 if(board[tempX][tempY] == "0" && !board[tempX][tempY].equals("F") && surroundFirstChecker(tempX, tempY, firstX, firstY) == true){
 				 board[tempX][tempY] = "B";
 				 counter++;
@@ -182,7 +182,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 			 System.out.println();
 		}
 	}
-	
+	//ERROR, FIX
 	public boolean surroundFirstChecker(int tempx, int tempy, int firx, int firy) {
 		try {
 			if(board[firx-1][firy-1] == board[tempx][tempy]){
@@ -290,7 +290,6 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		}
 		return "B";
 	}
-	
 	
 	public void boardFlagGenerator() {
 		firstFlagFirst=true;
