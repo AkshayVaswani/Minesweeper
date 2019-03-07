@@ -21,6 +21,8 @@ public class MineSweeper extends JPanel implements ActionListener, MouseListener
 	ImageIcon faceIcon;
 	JButton smileyFace;
 	int mineCount = 10;
+	int firstX;
+	int firstY;
 
 	
 	public MineSweeper()
@@ -76,12 +78,12 @@ public class MineSweeper extends JPanel implements ActionListener, MouseListener
 				panel.add(togglers[x][y]);
 			}
 		}
-		boardGenerator(65, 0, 0);
+		boardGenerator(mines);
 		frame.add(panel, BorderLayout.CENTER);
 		frame.revalidate();
 	}
 	
-	public void boardGenerator(int mineCounter, int firstX, int firstY){
+	public void boardGenerator(int mineCounter){
 		 int counter = 0;
 		 for(int i =0; i<dimensionx; i++) {
 			 for(int j =0; j<dimensiony; j++) {
@@ -89,7 +91,7 @@ public class MineSweeper extends JPanel implements ActionListener, MouseListener
 			 }
 		 }
 		 board[firstX][firstY] = "F";
-		 while(counter<80) {
+		 while(counter<mineCounter) {
 			 int tempX = (int)(Math.random()*dimensionx);
 			 int tempY = (int)(Math.random()*dimensiony);
 			 if(board[tempX][tempY] == "0" && board[tempX][tempY] != "F") {
