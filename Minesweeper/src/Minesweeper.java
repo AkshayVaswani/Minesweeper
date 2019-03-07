@@ -158,14 +158,16 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 				 board[i][j] = "0";
 			 	}
 		 }
+		 board[firstX][firstY] = "F";
 		 while(counter<mineCount){
 			 int tempX = (int)(Math.random()*dimensionx);
 			 int tempY = (int)(Math.random()*dimensiony);
-			 if(board[tempX][tempY] == "0" && board[tempX][tempY] != "F"){
+			 if(board[tempX][tempY] == "0" && !board[tempX][tempY].equals("F") && surroundFirstChecker(tempX, tempY, firstX, firstY) == true){
 				 board[tempX][tempY] = "B";
 				 counter++;
 			 }
 		 }
+		 
 		 for(int i =0 ; i<dimensionx; i++){				
 			 for(int j =0; j<dimensiony; j++){
 				if(surroundCheck(i,j) != "0"){
@@ -174,12 +176,63 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 			 }	 
 		 }
 		 for(int i =0; i<dimensionx; i++){
-			
 			 for(int j =0; j<dimensiony; j++){
 				 System.out.print(board[i][j]+" ");
 			 }
 			 System.out.println();
 		}
+	}
+	
+	public boolean surroundFirstChecker(int tempx, int tempy, int firx, int firy) {
+		try {
+			if(board[firx-1][firy-1] == board[tempx][tempy]){
+				return false;
+			}
+		} 
+		catch(ArrayIndexOutOfBoundsException ex){}
+		try {
+			if(board[firx][firy-1] == board[tempx][tempy]){
+				return false;
+			}
+		} 
+		catch(ArrayIndexOutOfBoundsException ex){}
+		try{
+			if(board[firx+1][firy-1] == board[tempx][tempy]){
+				return false;
+			}
+		} 
+		catch(ArrayIndexOutOfBoundsException ex){}
+		try {
+			if(board[firx-1][firy] == board[tempx][tempy]){
+				return false;
+			}
+		} 
+		catch(ArrayIndexOutOfBoundsException ex){}
+		try{
+			if(board[firx+1][firy] == board[tempx][tempy]){
+				return false;
+			}
+		} 
+		catch(ArrayIndexOutOfBoundsException ex){}
+		try {
+			if(board[firx-1][firy+1] == board[tempx][tempy]){
+				return false;
+			}
+		} 
+		catch(ArrayIndexOutOfBoundsException ex){}
+		try{
+			if(board[firx][firy+1] == board[tempx][tempy]){
+				return false;
+			}
+		} 
+		catch(ArrayIndexOutOfBoundsException ex){}
+		try{
+			if(board[firx+1][firy+1] == board[tempx][tempy]){
+				return false;
+			}
+		} 
+		catch(ArrayIndexOutOfBoundsException ex){}
+		return true;
 	}
 	public String surroundCheck(int x, int y){
 		int value = 0;
