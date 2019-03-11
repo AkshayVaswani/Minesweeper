@@ -60,13 +60,14 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		item3 = new JMenuItem("Expert");
 		firstFlagFirst=	false;
 		firstClick = false;
+		firstBombClick= false;
 		dimensionx = 9;
 		dimensiony = 9;
 		mineCount =10;
 		
 		board = new String[dimensionx][dimensiony];
 		boardFlag = new Boolean[dimensionx][dimensiony];
-		firstBombClick= false;
+		
 		
 		imageInitializer();
 		imagesPlease();
@@ -286,7 +287,16 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 	}
 	
 	public void mineOpener() {
-		
+		for(int x = 0 ; x<dimensionx; x++){
+			for(int y=0; y<dimensiony; y++){
+				if(board[x][y].equals("B")) {
+					togglers[x][y].setSelected(true);
+					togglers[x][y].setIcon(mine);
+					
+				}
+				
+			}
+		}
 	}
 	public void recursion(int x, int y){
         for(int i = x - 1; i <= x + 1 ; i++){ 
@@ -356,11 +366,11 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 									togglers[x][y].setIcon(eight);
 								}
 								if(board[x][y].equals("B")) {
-									togglers[x][y].setIcon(mine);
+									togglers[x][y].setIcon(mine_triggered);
 									if(!firstBombClick) {
 										firstBombClick = true;
-										togglers[x][y].setIcon(mine_triggered);
 										mineOpener();
+										togglers[x][y].setIcon(mine_triggered);
 									}
 								}
 							}
