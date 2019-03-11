@@ -162,9 +162,11 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		 }
 		 board[firstX][firstY] = "F";
 		 while(counter<mineCount){
+			 System.out.println("Test While");
 			 int tempX = (int)(Math.random()*dimensionx);
-			 int tempY = (int)(Math.random()*dimensiony);								//FIX, NOT WORKING, CAUSING COMPUTER TO CRASH
+			 int tempY = (int)(Math.random()*dimensiony);							
 			 if(board[tempX][tempY] == "0" && !board[tempX][tempY].equals("F") && surroundFirstChecker(tempX, tempY, firstX, firstY) == true){
+				 System.out.println("Test Mine");
 				 board[tempX][tempY] = "B";
 				 counter++;
 			 }
@@ -184,52 +186,51 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 			 System.out.println();
 		}
 	}
-	//ERROR, FIX
 	public boolean surroundFirstChecker(int tempx, int tempy, int firx, int firy) {
 		try {
-			if(board[firx-1][firy-1] == board[tempx][tempy]){
+			if(togglers[firx-1][firy-1] == togglers[tempx][tempy]){				
 				return false;
 			}
 		} 
 		catch(ArrayIndexOutOfBoundsException ex){}
 		try {
-			if(board[firx][firy-1] == board[tempx][tempy]){
+			if(togglers[firx][firy-1] == togglers[tempx][tempy]){				
 				return false;
 			}
 		} 
 		catch(ArrayIndexOutOfBoundsException ex){}
 		try{
-			if(board[firx+1][firy-1] == board[tempx][tempy]){
+			if(togglers[firx+1][firy-1] == togglers[tempx][tempy]){				
 				return false;
 			}
 		} 
 		catch(ArrayIndexOutOfBoundsException ex){}
 		try {
-			if(board[firx-1][firy] == board[tempx][tempy]){
+			if(togglers[firx-1][firy] == togglers[tempx][tempy]){				
 				return false;
 			}
 		} 
 		catch(ArrayIndexOutOfBoundsException ex){}
 		try{
-			if(board[firx+1][firy] == board[tempx][tempy]){
+			if(togglers[firx+1][firy] == togglers[tempx][tempy]){				
 				return false;
 			}
 		} 
 		catch(ArrayIndexOutOfBoundsException ex){}
 		try {
-			if(board[firx-1][firy+1] == board[tempx][tempy]){
+			if(togglers[firx-1][firy+1] == togglers[tempx][tempy]){				
 				return false;
 			}
 		} 
 		catch(ArrayIndexOutOfBoundsException ex){}
 		try{
-			if(board[firx][firy+1] == board[tempx][tempy]){
+			if(togglers[firx][firy+1] == togglers[tempx][tempy]){				
 				return false;
 			}
 		} 
 		catch(ArrayIndexOutOfBoundsException ex){}
 		try{
-			if(board[firx+1][firy+1] == board[tempx][tempy]){
+			if(togglers[firx+1][firy+1] == togglers[tempx][tempy]){
 				return false;
 			}
 		} 
