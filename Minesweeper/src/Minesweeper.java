@@ -19,16 +19,19 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 	JPanel panel;
 	JToggleButton [][] togglers;
 	static String [][] board;
-	static Boolean[][] boardFlag;
+	static boolean[][] boardFlag;
+	static boolean[][] isOpened;
 	ImageIcon[] imagesArray;
 	boolean firstFlagFirst;
 	boolean firstClick;
 	boolean firstBombClick;
+	boolean gameOverClick;
 	int dimensionx;
 	int dimensiony;
 	int mineCount;
 	int firstX;
 	int firstY;
+	int flagCounter;
 	
 	//images
 	ImageIcon mine;
@@ -56,18 +59,19 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		menuBar=new JMenuBar();
 		menu = 	new JMenu("Game");
 		item1 = new JMenuItem("Beginner"); 
-		item2= 	new JMenuItem("Intermediate");
+		item2 = new JMenuItem("Intermediate");
 		item3 = new JMenuItem("Expert");
 		firstFlagFirst=	false;
 		firstClick = false;
 		firstBombClick= false;
+		gameOverClick = false;
 		dimensionx = 9;
 		dimensiony = 9;
 		mineCount =10;
 		
 		board = new String[dimensionx][dimensiony];
-		boardFlag = new Boolean[dimensionx][dimensiony];
-		
+		boardFlag = new boolean[dimensionx][dimensiony];
+		isOpened = new boolean[dimensionx][dimensiony];
 		
 		imageInitializer();
 		imagesPlease();
@@ -193,30 +197,30 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 			 System.out.println();
 		}
 	}
-	public boolean surroundFirstChecker(int tempx, int tempy, int firx, int firy) {
+	public boolean surroundFirstChecker(int tempx, int tempy, int firx, int firy){
 		try {
-			if(togglers[firx-1][firy-1] == togglers[tempx][tempy]){ return false; }
-		} catch(ArrayIndexOutOfBoundsException ex){}
-		try {
-			if(togglers[firx][firy-1] == togglers[tempx][tempy]){ return false; }
-		} catch(ArrayIndexOutOfBoundsException ex){}
-		try{
-			if(togglers[firx+1][firy-1] == togglers[tempx][tempy]){ return false; }
+			if(togglers[firx-1][firy-1] == togglers[tempx][tempy]){ return false;}
 		} catch(ArrayIndexOutOfBoundsException ex){}
 		try {
-			if(togglers[firx-1][firy] == togglers[tempx][tempy]){ return false; }
+			if(togglers[firx][firy-1] == togglers[tempx][tempy]){ return false;}
 		} catch(ArrayIndexOutOfBoundsException ex){}
 		try{
-			if(togglers[firx+1][firy] == togglers[tempx][tempy]){ return false; }
+			if(togglers[firx+1][firy-1] == togglers[tempx][tempy]){ return false;}
 		} catch(ArrayIndexOutOfBoundsException ex){}
 		try {
-			if(togglers[firx-1][firy+1] == togglers[tempx][tempy]){ return false; }
+			if(togglers[firx-1][firy] == togglers[tempx][tempy]){ return false;}
 		} catch(ArrayIndexOutOfBoundsException ex){}
 		try{
-			if(togglers[firx][firy+1] == togglers[tempx][tempy]){ return false; }
+			if(togglers[firx+1][firy] == togglers[tempx][tempy]){ return false;}
+		} catch(ArrayIndexOutOfBoundsException ex){}
+		try {
+			if(togglers[firx-1][firy+1] == togglers[tempx][tempy]){ return false;}
 		} catch(ArrayIndexOutOfBoundsException ex){}
 		try{
-			if(togglers[firx+1][firy+1] == togglers[tempx][tempy]){ return false; }
+			if(togglers[firx][firy+1] == togglers[tempx][tempy]){ return false;}
+		} catch(ArrayIndexOutOfBoundsException ex){}
+		try{
+			if(togglers[firx+1][firy+1] == togglers[tempx][tempy]){ return false;}
 		} catch(ArrayIndexOutOfBoundsException ex){}
 		return true;
 	}
@@ -272,16 +276,23 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 				}
 			} 
 			catch(ArrayIndexOutOfBoundsException ex){}
-			return value + "";
+			return value+"";
 		}
 		return "B";
 	}
 	
-	public void boardFlagGenerator() {
+	public void boardFlagGenerator(){
 		firstFlagFirst=true;
 		for(int i =0; i<dimensionx; i++) {
 			for(int j =0; j<dimensiony; j++) {
 				boardFlag[i][j] = false;
+			}
+		}
+	}
+	public void boardOpenGenerator(){
+		for(int i =0; i<dimensionx; i++) {
+			for(int j =0; j<dimensiony; j++) {
+				isOpened[i][j] = false;
 			}
 		}
 	}
@@ -298,12 +309,21 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 			}
 		}
 	}
+	public void isGameOver () {
+		boolean game = false;
+		
+		
+		
+	}
+	
+	
 	public void recursion(int x, int y){
         for(int i = x - 1; i <= x + 1 ; i++){ 
             for(int j = y - 1; j <= y + 1; j++){
                 try{ 
                     if (!togglers[i][j].isSelected() && !board[i][j].equals("B")){
                         togglers[i][j].setSelected(true);
+                        //togglers[i][j].setEnabled(false);
                         togglers[i][j].setIcon(imagesArray[Integer.parseInt(board[i][j])]) ;
                         
                         if (board[i][j].equals("0")){
@@ -316,7 +336,10 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
         }
     }
 	
-	public static void main(String[] args){}
+	public static void main(String[] args){
+		
+		Minesweeper app = new Minesweeper();
+	}
 	public void mouseClicked(MouseEvent e) {}
 	public void mouseEntered(MouseEvent arg0){}
 	public void mouseExited(MouseEvent arg0){}
@@ -339,6 +362,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 								togglers[x][y].setSelected(true);
 								if(board[x][y].equals("0")) {
 									togglers[x][y].setIcon(zero);
+									//togglers[x][y].setEnabled(false);
 									recursion(x, y);
 								}
 								if(board[x][y].equals("1") ) {
@@ -387,14 +411,18 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 				for(int y=0; y<dimensiony; y++){
 					if(e.getSource()==togglers[x][y]){
 						
-							if(!boardFlag[x][y]){
+							if(!boardFlag[x][y] && !togglers[x][y].isSelected()){
 								boardFlag[x][y] = true;
 								togglers[x][y].setIcon(flag);
+								flagCounter++;
+								System.out.println(flagCounter);
 							}
 							else
 							{
 								boardFlag[x][y] = false;
 								togglers[x][y].setIcon(tile);
+								flagCounter--;
+								System.out.println(flagCounter);
 							}
 						}
 					
@@ -427,8 +455,10 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		}
 		firstClick = false;
 		board = new String[dimensionx][dimensiony];
-		boardFlag = new Boolean[dimensionx][dimensiony];
+		boardFlag = new boolean[dimensionx][dimensiony];
+		isOpened = new boolean[dimensionx][dimensiony];
 		firstFlagFirst=false;
+		flagCounter = 0;
 		firstBombClick = false;
 		nickIsNeon(dimensionx, dimensiony, mineCount);	
 	}
