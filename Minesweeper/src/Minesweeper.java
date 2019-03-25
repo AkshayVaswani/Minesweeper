@@ -303,9 +303,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 				if(board[x][y].equals("B")) {
 					togglers[x][y].setSelected(true);
 					togglers[x][y].setIcon(mine);
-					
 				}
-				
 			}
 		}
 	}
@@ -348,50 +346,48 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 			for(int x = 0 ; x<dimensionx; x++){
 				for(int y=0; y<dimensiony; y++){
 					if(e.getSource()==togglers[x][y]){
-						if(!firstFlagFirst) {
-							boardFlagGenerator();
-						}
-						if(!boardFlag[x][y]) {
-							if(!firstClick) {
-								firstClick = true;
-								firstX = x;
-								firstY = y;
-								firstClicker();
+						if(!firstBombClick) {
+							if(!firstFlagFirst) {
+								boardFlagGenerator();
 							}
-							if (!togglers[x][y].isSelected()) {
-								togglers[x][y].setSelected(true);
-								if(board[x][y].equals("0")) {
-									togglers[x][y].setIcon(zero);
-									//togglers[x][y].setEnabled(false);
-									recursion(x, y);
+							if(!boardFlag[x][y]) {
+								if(!firstClick) {
+									firstClick = true;
+									firstX = x;
+									firstY = y;
+									firstClicker();
 								}
-								if(board[x][y].equals("1") ) {
-									togglers[x][y].setIcon(one);
-								}
-								if(board[x][y].equals("2")) {
-									togglers[x][y].setIcon(two);
-								}
-								if(board[x][y].equals("3") ) {
-									togglers[x][y].setIcon(three);
-								}
-								if(board[x][y].equals("4") ) {
-									togglers[x][y].setIcon(four);
-								}
-								if(board[x][y].equals("5")) {
-									togglers[x][y].setIcon(five);
-								}
-								if(board[x][y].equals("6")) {
-									togglers[x][y].setIcon(six);
-								}
-								if(board[x][y].equals("7")) {
-									togglers[x][y].setIcon(seven);
-								}
-								if(board[x][y].equals("8")) {
-									togglers[x][y].setIcon(eight);
-								}
-								if(board[x][y].equals("B")) {
-									togglers[x][y].setIcon(mine_triggered);
-									if(!firstBombClick) {
+								if (!togglers[x][y].isSelected()) {
+									togglers[x][y].setSelected(true);
+									if(board[x][y].equals("0")) {
+										togglers[x][y].setIcon(zero);
+										recursion(x, y);
+									}
+									if(board[x][y].equals("1") ) {
+										togglers[x][y].setIcon(one);
+									}
+									if(board[x][y].equals("2")) {
+										togglers[x][y].setIcon(two);
+									}
+									if(board[x][y].equals("3") ) {
+										togglers[x][y].setIcon(three);
+									}
+									if(board[x][y].equals("4") ) {
+										togglers[x][y].setIcon(four);
+									}
+									if(board[x][y].equals("5")) {
+										togglers[x][y].setIcon(five);
+									}
+									if(board[x][y].equals("6")) {
+										togglers[x][y].setIcon(six);
+									}
+									if(board[x][y].equals("7")) {
+										togglers[x][y].setIcon(seven);
+									}
+									if(board[x][y].equals("8")) {
+										togglers[x][y].setIcon(eight);
+									}
+									if(board[x][y].equals("B")) {
 										firstBombClick = true;
 										mineOpener();
 										togglers[x][y].setIcon(mine_triggered);
@@ -410,7 +406,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 			for(int x = 0; x<dimensionx; x++){
 				for(int y=0; y<dimensiony; y++){
 					if(e.getSource()==togglers[x][y]){
-						
+						if(!firstBombClick) {
 							if(!boardFlag[x][y] && !togglers[x][y].isSelected()){
 								boardFlag[x][y] = true;
 								togglers[x][y].setIcon(flag);
@@ -425,9 +421,8 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 								System.out.println(flagCounter);
 							}
 						}
-					
+					}
 				}
-			
 			}
 		}
 		frame.revalidate();
@@ -464,4 +459,3 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 	}
 
 }
-
