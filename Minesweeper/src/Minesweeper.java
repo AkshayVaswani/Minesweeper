@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.text.StyledEditorKit.ForegroundAction;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -88,7 +89,8 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		
 		item1.addActionListener(this);
 		item2.addActionListener(this);
-		item3.addActionListener(this);		
+		item3.addActionListener(this);
+		smileyFace.addActionListener(this);
 		menuBar.add(smileyFace, BorderLayout.CENTER);
 		smileyFace.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		frame.add(menuBar, BorderLayout.NORTH);
@@ -229,51 +231,35 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		
 		if(board[x][y] != "B" ){
 			try {
-				if(board[x-1][y-1] == "B"){
-					value++;
-				}
+				if(board[x-1][y-1] == "B"){value++;}
 			} 
 			catch(ArrayIndexOutOfBoundsException ex){}
 			try {
-				if(board[x][y-1] == "B"){
-					value++;
-				}
+				if(board[x][y-1] == "B"){value++;}
 			} 
 			catch(ArrayIndexOutOfBoundsException ex){}
 			try{
-				if(board[x+1][y-1] == "B"){
-					value++;
-				}
+				if(board[x+1][y-1] == "B"){value++;}
 			} 
 			catch(ArrayIndexOutOfBoundsException ex){}
 			try {
-				if(board[x-1][y] == "B"){
-					value++;
-				}
+				if(board[x-1][y] == "B"){value++;}
 			} 
 			catch(ArrayIndexOutOfBoundsException ex){}
 			try{
-				if(board[x+1][y] == "B"){
-					value++;
-				}
+				if(board[x+1][y] == "B"){value++;}
 			} 
 			catch(ArrayIndexOutOfBoundsException ex){}
 			try {
-				if(board[x-1][y+1] == "B"){
-					value++;
-				}
+				if(board[x-1][y+1] == "B"){value++;}
 			} 
 			catch(ArrayIndexOutOfBoundsException ex){}
 			try{
-				if(board[x][y+1] == "B"){
-					value++;
-				}
+				if(board[x][y+1] == "B"){value++;}
 			} 
 			catch(ArrayIndexOutOfBoundsException ex){}
 			try{
-				if(board[x+1][y+1] == "B"){
-					value++;
-				}
+				if(board[x+1][y+1] == "B"){value++;}
 			} 
 			catch(ArrayIndexOutOfBoundsException ex){}
 			return value+"";
@@ -308,12 +294,37 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		}
 	}
 	public void isGameOver () {
-		boolean game = false;
-		
-		
-		
+		if(firstBombClick) {
+			JOptionPane.showMessageDialog(null, "Game Over, You Lose.");
+		}
+		else 
+		{
+			firstBombClick = true;
+			JOptionPane.showMessageDialog(null, "Nice Work, You Win!");	
+		}
 	}
-	
+	public void winConditions() {
+		int covered = 0;
+		int normal = 0;
+		for(int x = 0 ; x<dimensionx; x++){
+			for(int y=0; y<dimensiony; y++){
+				if(board[x][y] != "B") {
+					if(togglers[x][y].isSelected()) {
+						normal++;
+					}
+				} else {
+					if(boardFlag[x][y] == true || !togglers[x][y].isSelected()) {
+						covered++;
+					}
+				}
+			}
+		}
+		int notBombs = (dimensionx * dimensiony) - mineCount;
+		if (covered == mineCount && normal == notBombs) {
+			isGameOver();
+		}
+		System.out.println("cov: "+covered + " not" + notBombs + " nor" + normal);
+	}
 	
 	public void recursion(int x, int y){
         for(int i = x - 1; i <= x + 1 ; i++){ 
@@ -359,6 +370,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 								}
 								if (!togglers[x][y].isSelected()) {
 									togglers[x][y].setSelected(true);
+									winConditions();
 									if(board[x][y].equals("0")) {
 										togglers[x][y].setIcon(zero);
 										recursion(x, y);
@@ -391,6 +403,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 										firstBombClick = true;
 										mineOpener();
 										togglers[x][y].setIcon(mine_triggered);
+										isGameOver();
 									}
 								}
 							}
@@ -448,6 +461,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 			dimensiony = 30;
 			mineCount = 99 ;
 		}
+		else if(e.getSource() == smileyFace) {}
 		firstClick = false;
 		board = new String[dimensionx][dimensiony];
 		boardFlag = new boolean[dimensionx][dimensiony];
