@@ -1,23 +1,31 @@
 import javax.swing.*;
-import javax.swing.text.StyledEditorKit.ForegroundAction;
+
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
-import java.io.*;
+import java.util.*;
+import java.util.Timer;
+
 public class Minesweeper extends JPanel implements ActionListener, MouseListener{
 
 	/**
+	 * 
+	 * 
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	JFrame frame;
 	JMenuBar menuBar;
 	JMenu menu;
+	JMenu howTo;
 	JMenuItem item1;
 	JMenuItem item2;																																												
 	JMenuItem item3;
+	JMenuItem howToPlay;
 	JPanel panel;
+	JPanel topbar;
+	JPanel toptop;
+	Timer timer;
 	JToggleButton [][] togglers;
 	static String [][] board;
 	static boolean[][] boardFlag;
@@ -27,12 +35,15 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 	boolean firstClick;
 	boolean firstBombClick;
 	boolean gameOverClick;
+	boolean gameEnd;
 	int dimensionx;
 	int dimensiony;
 	int mineCount;
 	int firstX;
 	int firstY;
 	int flagCounter;
+	int timePassed;
+	
 	
 	//images
 	ImageIcon mine;
@@ -50,22 +61,35 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 	ImageIcon tile;
 	ImageIcon zero;	
 	JButton smileyFace;
-
+	JLabel flagCountDown;
+	JLabel time;
+	
+	
+	
 	
 	
 	public Minesweeper()
 	{
+		
+		
+		
+		
 		frame=new JFrame("Minesweeper");
 		frame.add(this);
 		menuBar=new JMenuBar();
 		menu = 	new JMenu("Game");
+		howTo = new JMenu("How To Play");
+		topbar = new JPanel();
+		toptop = new JPanel();
 		item1 = new JMenuItem("Beginner"); 
 		item2 = new JMenuItem("Intermediate");
 		item3 = new JMenuItem("Expert");
+		howToPlay = new JMenuItem("Click Here!");
 		firstFlagFirst=	false;
 		firstClick = false;
 		firstBombClick= false;
 		gameOverClick = false;
+		gameEnd=true;
 		dimensionx = 9;
 		dimensiony = 9;
 		mineCount =10;
@@ -81,19 +105,39 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		
 		smileyFace = new JButton("");
 		smileyFace.setIcon(faceIcon);
+		smileyFace.setPreferredSize(new Dimension(40, 40)); 
 		
+		howTo.add(howToPlay);
 		menu.add(item1);
 		menu.add(item2);
 		menu.add(item3);
 		menuBar.add(menu);
+		menuBar.add(howTo);
 		
-		item1.addActionListener(this);
+		howToPlay.addActionListener(this);
+		item1.addActionListener(this);		
 		item2.addActionListener(this);
 		item3.addActionListener(this);
 		smileyFace.addActionListener(this);
-		menuBar.add(smileyFace, BorderLayout.CENTER);
-		smileyFace.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-		frame.add(menuBar, BorderLayout.NORTH);
+		
+		flagCountDown = new JLabel(10-flagCounter +"");
+		flagCountDown.setFont(new Font("TimesRoman", Font.BOLD, 25));
+		
+		time = new JLabel("Timer");
+		time.setFont(new Font("TimesRoman", Font.BOLD, 25));
+		
+		timer = new Timer();
+		timer.schedule(new UpdateTimer(), 0, 1000);
+		
+		topbar.setLayout(new GridLayout(2,1));
+		toptop.add(flagCountDown);
+		toptop.add(smileyFace);
+		toptop.add(time);
+		
+		topbar.add(menuBar);
+		topbar.add(toptop);
+		frame.add(topbar, BorderLayout.NORTH);
+		
 		nickIsNeon(dimensionx, dimensiony, mineCount); 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);	
@@ -137,6 +181,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 	}
 	//recallable board setter
 	public void firstClicker(){
+		gameEnd = false;
 		boardGenerator(firstX, firstY);
 		boardFlagGenerator();
 	}
@@ -144,7 +189,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 	// he really is
 	public void nickIsNeon(int dimX, int dimY, int mines){
 
-		frame.setSize(50*dimY,50*dimX);
+		frame.setSize(50*dimY,55*dimX);
 		
 		imagesPlease();
 		panel = new JPanel();
@@ -230,37 +275,21 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		int value = 0;
 		
 		if(board[x][y] != "B" ){
-			try {
-				if(board[x-1][y-1] == "B"){value++;}
-			} 
+			try {if(board[x-1][y-1] == "B"){value++;}} 
 			catch(ArrayIndexOutOfBoundsException ex){}
-			try {
-				if(board[x][y-1] == "B"){value++;}
-			} 
+			try {if(board[x][y-1] == "B"){value++;}} 
 			catch(ArrayIndexOutOfBoundsException ex){}
-			try{
-				if(board[x+1][y-1] == "B"){value++;}
-			} 
+			try{if(board[x+1][y-1] == "B"){value++;}} 
 			catch(ArrayIndexOutOfBoundsException ex){}
-			try {
-				if(board[x-1][y] == "B"){value++;}
-			} 
+			try {if(board[x-1][y] == "B"){value++;}} 
 			catch(ArrayIndexOutOfBoundsException ex){}
-			try{
-				if(board[x+1][y] == "B"){value++;}
-			} 
+			try{if(board[x+1][y] == "B"){value++;}} 
 			catch(ArrayIndexOutOfBoundsException ex){}
-			try {
-				if(board[x-1][y+1] == "B"){value++;}
-			} 
+			try {if(board[x-1][y+1] == "B"){value++;}} 
 			catch(ArrayIndexOutOfBoundsException ex){}
-			try{
-				if(board[x][y+1] == "B"){value++;}
-			} 
+			try{if(board[x][y+1] == "B"){value++;}} 
 			catch(ArrayIndexOutOfBoundsException ex){}
-			try{
-				if(board[x+1][y+1] == "B"){value++;}
-			} 
+			try{if(board[x+1][y+1] == "B"){value++;}} 
 			catch(ArrayIndexOutOfBoundsException ex){}
 			return value+"";
 		}
@@ -287,13 +316,17 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		for(int x = 0 ; x<dimensionx; x++){
 			for(int y=0; y<dimensiony; y++){
 				if(board[x][y].equals("B")) {
-					togglers[x][y].setSelected(true);
-					togglers[x][y].setIcon(mine);
+					togglers[x][y].setEnabled(false);
+					togglers[x][y].setDisabledIcon(mine);
 				}
 			}
 		}
 	}
+	public void helpMenu () {
+		JOptionPane.showMessageDialog(null, "How to play: Click on a tile to start the game. Your goal is to\n flag all the bombs and open all other squares. The timer at\n the top will let you know how much time has passed.");
+	}
 	public void isGameOver () {
+		gameEnd = true;
 		if(firstBombClick) {
 			JOptionPane.showMessageDialog(null, "Game Over, You Lose.");
 		}
@@ -304,40 +337,32 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		}
 	}
 	public void winConditions() {
-		int covered = 0;
 		int normal = 0;
-		for(int x = 0 ; x<dimensionx; x++){
-			for(int y=0; y<dimensiony; y++){
-				if(board[x][y] != "B") {
-					if(togglers[x][y].isSelected()) {
-						normal++;
-					}
-				} else {
-					if(boardFlag[x][y] == true || !togglers[x][y].isSelected()) {
-						covered++;
-					}
+		for(int x = 0 ; x<dimensionx; x++) {
+			for(int y=0; y<dimensiony; y++) {
+				if(!togglers[x][y].isEnabled()) { 
+					normal++; 
 				}
 			}
 		}
 		int notBombs = (dimensionx * dimensiony) - mineCount;
-		if (covered == mineCount && normal == notBombs) {
-			isGameOver();
+		if (normal >= notBombs) {	
+			isGameOver();	
 		}
-		System.out.println("cov: "+covered + " not" + notBombs + " nor" + normal);
+		//System.out.println("not" + notBombs + " nor" + normal );
 	}
 	
 	public void recursion(int x, int y){
         for(int i = x - 1; i <= x + 1 ; i++){ 
             for(int j = y - 1; j <= y + 1; j++){
                 try{ 
-                    if (!togglers[i][j].isSelected() && !board[i][j].equals("B")){
-                        togglers[i][j].setSelected(true);
-                        //togglers[i][j].setEnabled(false);
-                        togglers[i][j].setIcon(imagesArray[Integer.parseInt(board[i][j])]) ;
-                        
+                    if (togglers[i][j].isEnabled() && !board[i][j].equals("B")){
+                        togglers[i][j].setEnabled(false);
+                        togglers[i][j].setDisabledIcon(imagesArray[Integer.parseInt(board[i][j])]);
                         if (board[i][j].equals("0")){
                             recursion(i, j); 
                         }
+                        winConditions();
                     }  
                 } 
                 catch(ArrayIndexOutOfBoundsException ex) {}
@@ -368,41 +393,26 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 									firstY = y;
 									firstClicker();
 								}
-								if (!togglers[x][y].isSelected()) {
-									togglers[x][y].setSelected(true);
+								if (togglers[x][y].isEnabled()) {
+									togglers[x][y].setEnabled(false);
 									winConditions();
 									if(board[x][y].equals("0")) {
-										togglers[x][y].setIcon(zero);
+										togglers[x][y].setDisabledIcon(zero);
 										recursion(x, y);
+										winConditions();
 									}
-									if(board[x][y].equals("1") ) {
-										togglers[x][y].setIcon(one);
-									}
-									if(board[x][y].equals("2")) {
-										togglers[x][y].setIcon(two);
-									}
-									if(board[x][y].equals("3") ) {
-										togglers[x][y].setIcon(three);
-									}
-									if(board[x][y].equals("4") ) {
-										togglers[x][y].setIcon(four);
-									}
-									if(board[x][y].equals("5")) {
-										togglers[x][y].setIcon(five);
-									}
-									if(board[x][y].equals("6")) {
-										togglers[x][y].setIcon(six);
-									}
-									if(board[x][y].equals("7")) {
-										togglers[x][y].setIcon(seven);
-									}
-									if(board[x][y].equals("8")) {
-										togglers[x][y].setIcon(eight);
-									}
+									if(board[x][y].equals("1")) {togglers[x][y].setDisabledIcon(one);  }
+									if(board[x][y].equals("2")) {togglers[x][y].setDisabledIcon(two);  }
+									if(board[x][y].equals("3")) {togglers[x][y].setDisabledIcon(three);}
+									if(board[x][y].equals("4")) {togglers[x][y].setDisabledIcon(four); }
+									if(board[x][y].equals("5")) {togglers[x][y].setDisabledIcon(five); }
+									if(board[x][y].equals("6")) {togglers[x][y].setDisabledIcon(six);  }
+									if(board[x][y].equals("7")) {togglers[x][y].setDisabledIcon(seven);}
+									if(board[x][y].equals("8")) {togglers[x][y].setDisabledIcon(eight);}
 									if(board[x][y].equals("B")) {
 										firstBombClick = true;
 										mineOpener();
-										togglers[x][y].setIcon(mine_triggered);
+										togglers[x][y].setDisabledIcon(mine_triggered);
 										isGameOver();
 									}
 								}
@@ -420,18 +430,23 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 				for(int y=0; y<dimensiony; y++){
 					if(e.getSource()==togglers[x][y]){
 						if(!firstBombClick) {
-							if(!boardFlag[x][y] && !togglers[x][y].isSelected()){
-								boardFlag[x][y] = true;
-								togglers[x][y].setIcon(flag);
-								flagCounter++;
-								System.out.println(flagCounter);
-							}
-							else
-							{
-								boardFlag[x][y] = false;
-								togglers[x][y].setIcon(tile);
-								flagCounter--;
-								System.out.println(flagCounter);
+							if(togglers[x][y].isEnabled()) {
+								if(!boardFlag[x][y]){
+									boardFlag[x][y] = true;
+									togglers[x][y].setIcon(flag);
+									flagCounter++;
+									flagCountDown.setText(""+(10-flagCounter));
+									
+									System.out.println(flagCounter);
+								}
+								else
+								{
+									boardFlag[x][y] = false;
+									togglers[x][y].setIcon(tile);
+									flagCounter--;
+									flagCountDown.setText(""+(10-flagCounter));
+									System.out.println(flagCounter);
+								}
 							}
 						}
 					}
@@ -450,26 +465,45 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 			dimensionx = 9;
 			dimensiony = 9;
 			mineCount = 10;
+			stuff();
 		}
 		else if (e.getSource()==item2){
 			dimensionx = 16;
 			dimensiony = 16 ;
 			mineCount = 40  ;
+			stuff();
 		}
 		else if (e.getSource()==item3){
 			dimensionx = 16 ;
 			dimensiony = 30;
 			mineCount = 99 ;
+			stuff();
 		}
-		else if(e.getSource() == smileyFace) {}
+		else if(e.getSource() == smileyFace) { stuff(); }
+		else if(e.getSource() == howToPlay) { helpMenu(); }
+		
+	}
+	public void stuff() {
 		firstClick = false;
 		board = new String[dimensionx][dimensiony];
 		boardFlag = new boolean[dimensionx][dimensiony];
 		isOpened = new boolean[dimensionx][dimensiony];
+		timePassed = 0;
+		gameEnd = true;
+		time.setText("Timer ");
 		firstFlagFirst=false;
 		flagCounter = 0;
+		
+		flagCountDown.setText(""+(10-flagCounter));
 		firstBombClick = false;
 		nickIsNeon(dimensionx, dimensiony, mineCount);	
 	}
-
+	class UpdateTimer extends TimerTask {
+		public void run() {
+			if(!gameEnd){
+				timePassed++;
+				time.setText("  "+timePassed);
+			}
+		}
+	}
 }
