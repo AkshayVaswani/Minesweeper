@@ -1,5 +1,6 @@
 import javax.swing.*;
 
+import com.sun.glass.ui.Window.Level;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -41,8 +42,8 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 	int mineCount;
 	int firstX;
 	int firstY;
-	int flagCounter;
 	int timePassed;
+	int flagLevel;
 	
 	
 	//images
@@ -93,6 +94,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		dimensionx = 9;
 		dimensiony = 9;
 		mineCount =10;
+		flagLevel = 10;
 		
 		board = new String[dimensionx][dimensiony];
 		boardFlag = new boolean[dimensionx][dimensiony];
@@ -120,7 +122,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		item3.addActionListener(this);
 		smileyFace.addActionListener(this);
 		
-		flagCountDown = new JLabel(10-flagCounter +"");
+		flagCountDown = new JLabel(flagLevel +"");
 		flagCountDown.setFont(new Font("TimesRoman", Font.BOLD, 25));
 		
 		time = new JLabel("Timer");
@@ -224,7 +226,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		 while(counter<mineCount){
 			 int tempX = (int)(Math.random()*dimensionx);
 			 int tempY = (int)(Math.random()*dimensiony);							
-			 if(board[tempX][tempY] == "0" && !board[tempX][tempY].equals("F") && surroundFirstChecker(tempX, tempY, firstX, firstY) == true){ //checking to place bombs
+			 if(board[tempX][tempY] == "0" && !board[tempX][tempY].equals("F") && surroundFirstChecker(tempX, tempY, firstX, firstY)){ //checking to place bombs
 				 board[tempX][tempY] = "B";
 				 counter++;
 			 }
@@ -349,9 +351,18 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		if (normal >= notBombs) {	
 			isGameOver();	
 		}
-		//System.out.println("not" + notBombs + " nor" + normal );
 	}
-	
+	public int howManyFlagsClicked() {
+		int flagaronis = 0;
+		isFlagSelected();
+		for(int i = 0; i<dimensionx; i++) {
+			for(int j = 0; j<dimensiony; j++) {
+				if(boardFlag[i][j])
+				flagaronis++;
+			}
+		}
+		return flagaronis;
+	}
 	public void recursion(int x, int y){
         for(int i = x - 1; i <= x + 1 ; i++){ 
             for(int j = y - 1; j <= y + 1; j++){
@@ -360,6 +371,8 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
                         togglers[i][j].setEnabled(false);
                         togglers[i][j].setDisabledIcon(imagesArray[Integer.parseInt(board[i][j])]);
                         if (board[i][j].equals("0")){
+                        	boardFlag[i][j]= false; 
+                        	flagCountDown.setText(""+(flagLevel-howManyFlagsClicked()));
                             recursion(i, j); 
                         }
                         winConditions();
@@ -369,6 +382,15 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
             }
         }
     }
+	public void isFlagSelected() {
+		for(int i = 0; i<dimensionx; i++) {
+			for(int j = 0; j<dimensiony; j++) {
+				if(!togglers[i][j].isEnabled() && boardFlag[i][j]) {
+					boardFlag[i][j] = false;	
+				}	
+			}
+		}
+	}
 	
 	public static void main(String[] args){
 		
@@ -383,9 +405,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 				for(int y=0; y<dimensiony; y++){
 					if(e.getSource()==togglers[x][y]){
 						if(!firstBombClick) {
-							if(!firstFlagFirst) {
-								boardFlagGenerator();
-							}
+							if(!firstFlagFirst) {boardFlagGenerator();}
 							if(!boardFlag[x][y]) {
 								if(!firstClick) {
 									firstClick = true;
@@ -434,18 +454,17 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 								if(!boardFlag[x][y]){
 									boardFlag[x][y] = true;
 									togglers[x][y].setIcon(flag);
-									flagCounter++;
-									flagCountDown.setText(""+(10-flagCounter));
 									
-									System.out.println(flagCounter);
+									flagCountDown.setText(""+(flagLevel-howManyFlagsClicked()));
+									
 								}
 								else
 								{
 									boardFlag[x][y] = false;
 									togglers[x][y].setIcon(tile);
-									flagCounter--;
-									flagCountDown.setText(""+(10-flagCounter));
-									System.out.println(flagCounter);
+									
+									flagCountDown.setText(""+(flagLevel-howManyFlagsClicked()));
+									
 								}
 							}
 						}
@@ -456,6 +475,7 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		frame.revalidate();
 		
 	}
+	
 
 	public void mouseReleased(MouseEvent e) {}
 	public void actionPerformed(ActionEvent e) {
@@ -465,18 +485,21 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 			dimensionx = 9;
 			dimensiony = 9;
 			mineCount = 10;
+			flagLevel = 10;
 			stuff();
 		}
 		else if (e.getSource()==item2){
 			dimensionx = 16;
-			dimensiony = 16 ;
-			mineCount = 40  ;
+			dimensiony = 16;
+			mineCount = 40;
+			flagLevel = 40;
 			stuff();
 		}
 		else if (e.getSource()==item3){
-			dimensionx = 16 ;
+			dimensionx = 16;
 			dimensiony = 30;
-			mineCount = 99 ;
+			mineCount = 99;
+			flagLevel = 99;
 			stuff();
 		}
 		else if(e.getSource() == smileyFace) { stuff(); }
@@ -492,9 +515,8 @@ public class Minesweeper extends JPanel implements ActionListener, MouseListener
 		gameEnd = true;
 		time.setText("Timer ");
 		firstFlagFirst=false;
-		flagCounter = 0;
 		
-		flagCountDown.setText(""+(10-flagCounter));
+		flagCountDown.setText(""+(flagLevel-howManyFlagsClicked()));
 		firstBombClick = false;
 		nickIsNeon(dimensionx, dimensiony, mineCount);	
 	}
